@@ -26,7 +26,6 @@ extension Workout {
 
 }
 
-// MARK: Generated accessors for exercise
 extension Workout {
 
     @objc(addExerciseObject:)
