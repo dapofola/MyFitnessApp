@@ -1,3 +1,9 @@
+// ExercisePickerSheet
+//
+// View for users to select an exercise for their workout/template
+//
+// Created by Dapo Folami
+
 import SwiftUI
 import CoreData
 
@@ -11,7 +17,6 @@ struct ExercisePickerSheet: View {
         animation: .default
     ) private var allExercises: FetchedResults<Exercise>
     
-    // FIX 1: Added the missing @State variable for the filter sheet
     @State private var showFilters: Bool = false
     
     // State for Search and Filter
@@ -20,7 +25,6 @@ struct ExercisePickerSheet: View {
     @State private var selectedMovementType: MovementType? = nil
     @State private var selectedMuscleGroup: PrimaryMuscleGroup? = nil
 
-    // FIX 2: Corrected the array syntax (added closing ']')
     private var filteredExercises: [Exercise] {
         allExercises.filter { exercise in
             // 1. Search Filter

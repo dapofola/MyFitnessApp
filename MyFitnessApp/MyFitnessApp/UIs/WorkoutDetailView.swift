@@ -1,3 +1,9 @@
+// WorkoutDetailView
+//
+// View for users to see details of previous workouts they've completed
+//
+// Created by Dapo Folami
+
 import SwiftUI
 import CoreData
 
@@ -76,7 +82,6 @@ struct DetailExerciseDisclosure: View {
     }
     
     var body: some View {
-        // FIX: Added 'label:' keyword and moved the label content into its closure.
         DisclosureGroup(isExpanded: $isExpanded) {
             VStack(spacing: 0) {
                 // Sets List
@@ -88,7 +93,7 @@ struct DetailExerciseDisclosure: View {
                 .listRowSeparator(.visible, edges: .top)
             }
             .padding(.top, 4)
-        } label: { // CORRECT SYNTAX: label: { ... }
+        } label: {
             HStack {
                 Text(exercise.name ?? "Unknown Exercise")
                     .font(.headline)

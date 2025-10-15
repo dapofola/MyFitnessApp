@@ -1,7 +1,12 @@
+// CreateEditTemplateView
+//
+// View for users to create a new exercise template (or delete an existing one)
+//
+// Created by Dapo Folami
+
 import SwiftUI
 import CoreData
 
-// NOTE: Ensure the TemplateSet and TemplateExercise structs from Section 1 are included in this file.
 
 // MARK: - Template Structs (Used for SwiftUI State)
 struct TemplateSet: Identifiable, Hashable {
@@ -10,7 +15,7 @@ struct TemplateSet: Identifiable, Hashable {
     var weight: Double = 0.0
     var rpe: Double = 0.0
     var duration: Int = 0
-    var setType: SetType = .normal // Assumes SetType enum exists
+    var setType: SetType = .normal
     var notes: String = ""
 }
 
@@ -99,7 +104,7 @@ struct CreateEditTemplateView: View {
                             }
                         }
                         .onDelete(perform: deleteExercise)
-                        // .onMove(perform: moveExercise) // Reordering can be complex with CoreData linking, but basic state management is supported.
+                       
                     }
 
                     // Button to open the exercise selector sheet
@@ -146,11 +151,11 @@ struct CreateEditTemplateView: View {
         
         templateToSave.name = name
         
-        // 1. Update the Exercise relationship (NSSet)
+        // Update the Exercise relationship (NSSet)
         let exercisesSet = NSSet(array: exercisesInTemplate.map { $0.exercise })
         templateToSave.exercise = exercisesSet
         
-        // 2. Create and link new Set entities based on the TemplateSet structs
+        // Create and link new Set entities based on the TemplateSet structs
         let allSets = NSMutableSet()
         
         for templateExercise in exercisesInTemplate {

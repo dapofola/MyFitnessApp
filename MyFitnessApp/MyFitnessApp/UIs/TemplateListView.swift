@@ -1,3 +1,9 @@
+// TemplateListView
+//
+// View for users to see all the workout templates they have saved
+//
+// Created by Dapo Folami
+
 import SwiftUI
 import CoreData
 
@@ -5,7 +11,6 @@ struct TemplateListView: View {
     @Environment(\.managedObjectContext) private var viewContext
     
     // Fetch only workouts marked as templates
-    // NOTE: This fetch requires 'isTemplate' to be added to the Workout CoreData model.
     @FetchRequest(
         entity: Workout.entity(),
         sortDescriptors: [NSSortDescriptor(keyPath: \Workout.name, ascending: true)],
@@ -20,15 +25,12 @@ struct TemplateListView: View {
                 ForEach(templates) { template in
                     // NavigationLink to edit the template
                     NavigationLink {
-                        // We will define this view next.
                         CreateEditTemplateView(template: template)
                     } label: {
                         VStack(alignment: .leading) {
                             Text(template.name ?? "Untitled Template")
                                 .font(.headline)
                             
-                            // Safely unwrap and count the exercises relationship
-                            // NOTE: Assumes 'exercise' is an NSSet property on Workout
                             let exerciseCount = (template.exercise as? Swift.Set<Exercise>)?.count ?? 0
                             
                             if exerciseCount > 0 {

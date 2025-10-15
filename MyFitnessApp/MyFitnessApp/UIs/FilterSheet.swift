@@ -1,3 +1,9 @@
+// FilterSheet
+//
+// Sheet to add filter to the exercise list view
+//
+// Created by Dapo Folami
+
 import SwiftUI
 
 struct FilterSheet: View {
@@ -50,7 +56,6 @@ struct FilterSheet: View {
                             Text(movement.rawValue).tag(movement as MovementType?)
                         }
                     }
-                    // Fix 1: Update onChange to iOS 17 standard and implement logic
                     .onChange(of: selectedBodyRegion) {
                         if let region = selectedBodyRegion,
                            let movement = selectedMovementType,

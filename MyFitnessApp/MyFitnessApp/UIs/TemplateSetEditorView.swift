@@ -1,3 +1,8 @@
+// TemplateSetEditorView
+//
+// View for users to edit or create new template workouts
+//
+// Created by Dapo Folami
 import SwiftUI
 
 struct TemplateSetEditorView: View {

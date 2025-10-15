@@ -1,6 +1,11 @@
+// Persistence
+//
+// Prepopulate app wit common templates and exercises for suers
+//
+// Created by Dapo Folami
+
 import CoreData
 import SwiftUI
-// NOTE: All Enums (BodyRegion, MovementType, SetType, etc.) are assumed to be defined in FitnessEnums.swift
 
 // MARK: - Sample Data Structures (for seedDefaultData)
 
@@ -155,7 +160,6 @@ private let sampleTemplates: [(name: String, exercises: [String])] = [
     ("Hypertrophy - Chest & Tri", ["Decline Barbell Press", "Machine Pec Dec", "Cable Fly", "Close-Grip Bench Press", "Overhead Triceps Extension (Dumbbell)", "V-Bar Pushdown"]),
 ]
 
-// FIX: Must be a class for weak self capture in Core Data initializer
 class PersistenceController {
     static let shared = PersistenceController()
 
@@ -167,7 +171,6 @@ class PersistenceController {
         // Add sample data for preview
         result.seedDefaultData()
         
-        // NOTE: The save here is only for the static preview context
         do {
             try viewContext.save()
         } catch {
@@ -183,15 +186,12 @@ class PersistenceController {
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
         }
         
-        // FIX: The [weak self] is valid because PersistenceController is a class.
         container.loadPersistentStores(completionHandler: { [weak self] (storeDescription, error) in
             if let error = error as NSError? {
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }
-            // Safely call the method on the weakly captured self
-            // This is primarily for ensuring the seeding happens if not in preview
+
             if !inMemory {
-                // Only seed if the persistent store is empty (i.e., first launch)
                 self?.seedDefaultData()
             }
         })
@@ -199,7 +199,6 @@ class PersistenceController {
 
     // MARK: - Sample Data Seeding
     
-    // FIX: Replaced the original logic with the new, extensive sample data generation
     private func seedDefaultData() {
         let context = container.viewContext
         // Check if data already exists
@@ -255,7 +254,6 @@ class PersistenceController {
         
         // --- 3. History Workouts (5 Total, Reverse Chronological) ---
         
-        // Dates: -4 days, -3 days, -2 days, -1 day, 0 days (Today)
         let historyDates = [449, 448, 447, 445, 444].map { Calendar.current.date(byAdding: .day, value: -$0, to: Date())! }
         
         let historyWorkoutSpecs: [(name: String, date: Date, exercises: [String])] = [
@@ -352,7 +350,6 @@ class PersistenceController {
     
     // MARK: Set Creation Helper
     
-    // FIX: Updated to correctly link the new Set to the Workout object (critical for templates/history)
     private func createSet(context: NSManagedObjectContext, workout: Workout? = nil, ex: Exercise, reps: Int, weight: Double, rpe: Double, duration: Int = 0, setType: SetType, notes: String? = nil) -> Set {
         let set = Set(context: context)
         set.uuid = UUID()

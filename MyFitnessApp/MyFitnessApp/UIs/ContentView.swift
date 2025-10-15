@@ -1,9 +1,14 @@
+// ContentView
+//
+// Basic view baseline for appp
+//
+// Created by Dapo Folami
+
 import SwiftUI
 
 struct ContentView: View {
     
-    // Inject the managed object context from the environment
-    // This is provided by MyFitnessAppApp.swift
+    // Get context from the environment
     @Environment(\.managedObjectContext) private var viewContext
     
     var body: some View {
@@ -17,7 +22,7 @@ struct ContentView: View {
                 .toolbarBackground(.bar, for: .tabBar)
                 .toolbarBackground(Color(red: 1.0, green: 150/255, blue: 140/255, opacity: 0.05), for: .tabBar)
             
-            // MARK: - Tab 2: Start Workout (UPDATED)
+            // MARK: - Tab 2: Start Workout
             StartWorkoutView()
                 .tabItem {
                     Label("Start Workout", systemImage: "plus.circle.fill")
@@ -52,18 +57,7 @@ struct ContentView: View {
     }
 }
 
-// ExerciseListView and other dependencies (like FilterSheet) remain in their own files.
-// Add a simple ExerciseListView struct to avoid initial errors.
-// We will replace this in Step 2.
-/*struct ExerciseListView: View {
-    var body: some View {
-        NavigationView {
-            Text("Loading Exercise List...")
-                .navigationTitle("Exercises")
-        }
-    }
-}*/
-
+// Preview for testing
 #Preview {
     ContentView()
         .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)

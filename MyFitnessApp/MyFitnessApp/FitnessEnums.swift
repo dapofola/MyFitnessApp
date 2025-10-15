@@ -1,7 +1,8 @@
+// FitnessEnums
 //
-//  FitnessEnums.swift
-//  MyFitnessApp
+// Defining various aspects of workouts, sets, and exercises
 //
+// Created by Dapo Folami
 
 import Foundation
 
@@ -48,7 +49,6 @@ enum MovementType: String, CaseIterable, Identifiable {
     }
 
     // Helper 2: Filters Primary Muscle Groups based on Movement Type (Used in CreateExerciseView & potentially ExerciseListView)
-    // This is the function that must be defined here, NOT on PrimaryMuscleGroup.
     static func groups(for movementType: MovementType) -> [PrimaryMuscleGroup] {
         switch movementType {
         case .push:

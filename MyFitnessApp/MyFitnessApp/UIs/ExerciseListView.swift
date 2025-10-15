@@ -1,3 +1,9 @@
+// ExerciseListView
+//
+// View for users to see all the exercises they have saved
+//
+// Created by Dapo Folami
+
 import SwiftUI
 import CoreData
 
@@ -85,7 +91,6 @@ struct ExerciseListView: View {
                 ForEach(filteredExercises) { exercise in
                     // NavigationLink for editing the existing exercise
                     NavigationLink {
-                        // Requires CreateEditExerciseView.swift to be defined
                         CreateEditExerciseView(existingExercise: exercise)
                     } label: {
                         VStack(alignment: .leading) {
@@ -134,7 +139,6 @@ struct ExerciseListView: View {
             
             // MARK: - Sheets
             .sheet(isPresented: $showFilters) {
-                // Requires FilterSheet.swift to be defined
                 FilterSheet(
                     selectedBodyRegion: $selectedBodyRegion,
                     selectedMovementType: $selectedMovementType,
@@ -175,7 +179,7 @@ struct FilterTag: View {
                 Image(systemName: "xmark.circle.fill")
                     .foregroundColor(.white)
             }
-            .buttonStyle(.plain) // Ensure button is tappable within the Hstack
+            .buttonStyle(.plain)
         }
         .padding(.vertical, 6)
         .padding(.horizontal, 10)

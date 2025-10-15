@@ -1,3 +1,9 @@
+// StartWorkoutView
+//
+// View for users to start a new workout - either from scratch or from a template
+//
+// Created by Dapo Folami
+
 import SwiftUI
 import CoreData
 
@@ -54,9 +60,7 @@ struct StartWorkoutView: View {
                     }
                 }
             }
-            //.navigationTitle("Start Workout")
             .fullScreenCover(isPresented: $showingActiveWorkout) {
-                // LINE 70: This is the updated line to show ActiveWorkoutView
                 ActiveWorkoutView(template: selectedTemplate, context: viewContext)
             }
         }

@@ -1,3 +1,10 @@
+// ActiveWorkoutView
+//
+// View for users to see information re: their current workout
+//
+// Created by Dapo Folami
+
+
 import SwiftUI
 import CoreData
 
@@ -19,7 +26,7 @@ struct ActiveWorkoutView: View {
     private var sortedSets: [Set] {
         return (currentWorkout.sets?.allObjects as? [Set] ?? [])
             .sorted { (set1, set2) -> Bool in
-                // Sort first by exercise index in the workout, then by set creation order (UUID is a good proxy)
+                // Sort first by exercise index in the workout, then by set creation order (using UUID as the relevant proxy)
                 let exerciseOrder = currentWorkout.orderedExercises.firstIndex(of: set1.exercise!) ?? 0
                 let exerciseOrder2 = currentWorkout.orderedExercises.firstIndex(of: set2.exercise!) ?? 0
                 
@@ -32,25 +39,25 @@ struct ActiveWorkoutView: View {
             }
     }
 
-    // MARK: - Initializer
+    // Initializer
     init(template: Workout? = nil, context: NSManagedObjectContext) {
-        // 1. Create a new managed Workout object
+        // Create a new managed Workout object
         let newWorkout = Workout(context: context)
         newWorkout.uuid = UUID()
         newWorkout.date = Date()
         newWorkout.isTemplate = false
         newWorkout.name = template?.name ?? "Workout \(Date.now.formatted(date: .numeric, time: .omitted))"
 
-        // 2. If a template is provided, copy its structure (exercises and sets)
+        // If a template is provided, copy its structure (exercises and sets)
         if let template = template {
             newWorkout.name = template.name ?? "New Workout"
             
-            // Set up relationship copies (Exercises)
+            // Set up template exercsies
             if let templateExercises = template.exercise as? Swift.Set<Exercise> {
                 newWorkout.exercise = NSSet(set: templateExercises)
             }
             
-            // Set up relationship copies (Sets)
+            // Set up template sets
             if let templateSets = template.sets?.allObjects as? [Set] {
                 let newSets = templateSets.map { templateSet -> Set in
                     let newSet = Set(context: context)
@@ -75,8 +82,7 @@ struct ActiveWorkoutView: View {
         }
     }
     
-    // MARK: - View Body
-    
+    // Body of the view
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
@@ -102,24 +108,25 @@ struct ActiveWorkoutView: View {
                 .padding(.vertical, 10)
                 .background(Color(.systemGray6))
                 
-                // MARK: - Exercise List (Disclosure Groups)
+                // Display list of exercises
                 List {
                     ForEach(currentWorkout.orderedExercises, id: \.self) { exercise in
                         ExerciseRowDisclosure(
                             currentWorkout: currentWorkout,
                             exercise: exercise,
                             sets: setsForExercise(exercise),
-                            // Pass the set addition function directly
+                            
+                            // Add sets using the addSet function directly on the view.
                             addSetAction: { addSet(to: exercise) }
                         )
                     }
-                    // This onDelete is for deleting the Exercise from the workout
+                    
+                    // Establish deletion logic to go with delete button
                     .onDelete { indices in
                         deleteExercise(offsets: indices)
                     }
                 }
                 .listStyle(.insetGrouped)
-                // Note: The main List now handles the exercises, and the sets are within the DisclosureGroup.
             }
             .navigationTitle(currentWorkout.name ?? "Active Workout")
             .navigationBarTitleDisplayMode(.inline)
@@ -144,12 +151,12 @@ struct ActiveWorkoutView: View {
         }
     }
     
-    // MARK: - Helper Methods
-    
+    // Helper Functions
     private func setsForExercise(_ exercise: Exercise) -> [Set] {
         return sortedSets.filter { $0.exercise == exercise }
     }
     
+    // Function to add sets to the view
     private func addSet(to exercise: Exercise) {
         let newSet = Set(context: viewContext)
         newSet.uuid = UUID()
@@ -162,7 +169,7 @@ struct ActiveWorkoutView: View {
         
         currentWorkout.addToSets(newSet)
         
-        // Copy values from the last set of this exercise, if one exists
+        // Default to make the current set equal to the previous set of this exercise (if one exists)
         if let lastSet = setsForExercise(exercise).last {
             newSet.reps = lastSet.reps
             newSet.weight = lastSet.weight
@@ -178,6 +185,7 @@ struct ActiveWorkoutView: View {
         let exercisesToDelete = offsets.map { currentWorkout.orderedExercises[$0] }
         
         for exercise in exercisesToDelete {
+            
             // Remove all associated sets first
             let setsToClear = setsForExercise(exercise)
             for set in setsToClear {
@@ -191,6 +199,7 @@ struct ActiveWorkoutView: View {
         saveContext()
     }
     
+    // Save the workout context and dismiss the view
     private func finishWorkout() {
         currentWorkout.date = Date()
         currentWorkout.isTemplate = false
@@ -199,6 +208,7 @@ struct ActiveWorkoutView: View {
         dismiss()
     }
     
+    // Clear the current workout from the viewContext and dismiss the view
     private func cancelWorkout() {
         if let sets = currentWorkout.sets?.allObjects as? [Set] {
             for set in sets {
@@ -211,6 +221,7 @@ struct ActiveWorkoutView: View {
         dismiss()
     }
     
+    // Save the workout context
     private func saveContext() {
         do {
             try viewContext.save()
@@ -222,7 +233,7 @@ struct ActiveWorkoutView: View {
 }
 
 
-// MARK: - Utility Extension to Order Exercises in a Workout
+// Utility Extension to Order Exercises in a Workout
 extension Workout {
     var orderedExercises: [Exercise] {
         guard let exercisesSet = self.exercise as? Swift.Set<Exercise> else { return [] }
@@ -230,9 +241,9 @@ extension Workout {
     }
 }
 
-// MARK: - Sub Views
+// MARK: Sub Views
 
-// 1. New Exercise Row using DisclosureGroup (Replaces ExerciseSetSection)
+// New Exercise Row using DisclosureGroup (Replaces ExerciseSetSection)
 struct ExerciseRowDisclosure: View {
     @Environment(\.managedObjectContext) private var viewContext
     @ObservedObject var currentWorkout: Workout
@@ -290,7 +301,7 @@ struct ExerciseRowDisclosure: View {
             // Ensure the disclosure arrow is visible and the tap area is responsive
             .contentShape(Rectangle())
         }
-        // Ensure the DisclosureGroup is treated as one list item
+        // Treat DisclosureGroup as one list item
         .listRowSeparator(.visible, edges: .top)
         .padding(.vertical, 8)
         .listRowBackground(Color(.systemBackground))
@@ -315,7 +326,7 @@ struct ExerciseRowDisclosure: View {
 }
 
 
-// 2. Row for logging a single set
+// Row for logging a single set
 struct SetRowView: View {
     @ObservedObject var set: Set
     let index: Int
@@ -333,7 +344,7 @@ struct SetRowView: View {
             
             Divider()
             
-            // MARK: - Input Fields
+            // Input Fields
             Group {
                 if isDurationSet {
                     NumericInputView(label: "Time (s)", value: $set.duration)
@@ -354,7 +365,7 @@ struct SetRowView: View {
     }
 }
 
-// 3. Custom Numeric Input Field Component (Kept from previous version)
+// Custom Numeric Input Field Component
 struct NumericInputView: View {
     let label: String
     private let doubleBinding: Binding<Double>?
@@ -387,7 +398,6 @@ struct NumericInputView: View {
                     .textFieldStyle(.roundedBorder)
                     .multilineTextAlignment(.center)
             } else if let binding = int16Binding {
-                // Requires the .toInt extension from BindingExtensions.swift
                 TextField(label, value: binding.toInt, format: .number)
                     .keyboardType(.numberPad)
                     .textFieldStyle(.roundedBorder)
@@ -400,7 +410,7 @@ struct NumericInputView: View {
 }
 
 
-// 4. Sheet for adding exercises to the active workout (Kept from previous version)
+// Sheet for adding exercises to the active workout
 struct AddExerciseToWorkoutSheet: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.dismiss) var dismiss
@@ -469,7 +479,7 @@ struct AddExerciseToWorkoutSheet: View {
     }
 }
 
-// 5. Simple Search Bar component (Kept from previous version)
+// Simple Search Bar component
 struct SearchBar: View {
     @Binding var text: String
     
@@ -498,7 +508,7 @@ struct SearchBar: View {
     }
 }
 
-// 6. Row view for selecting an exercise (Kept from previous version)
+// Row view for selecting an exercise
 struct ExerciseSelectRow: View {
     @ObservedObject var exercise: Exercise
     

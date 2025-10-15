@@ -1,3 +1,9 @@
+// HistoryView
+//
+// View for users to see all the their past workouts
+//
+// Created by Dapo Folami
+
 import SwiftUI
 import CoreData
 
@@ -15,7 +21,6 @@ struct HistoryView: View {
     var groupedWorkouts: [String: [Workout]] {
         Dictionary(grouping: workouts) { workout in
             guard let date = workout.date else { return "Unknown Date" }
-            // FIX: Reverted to the correct, non-chaining syntax: date: .medium, time: .omitted
             return date.formatted(date: .abbreviated, time: .omitted)
         }
     }

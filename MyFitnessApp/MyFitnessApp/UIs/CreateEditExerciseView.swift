@@ -1,3 +1,9 @@
+// CreateEditExerciseView
+//
+// View for users to create new exercises or edit exisitng ones
+//
+// Created by Dapo Folami
+
 import SwiftUI
 import CoreData
 
@@ -16,7 +22,7 @@ struct CreateEditExerciseView: View {
     // The optional existing exercise to edit
     let existingExercise: Exercise?
 
-    // MARK: - Initializer (Handles both Create and Edit)
+    // MARK: Initializer for both creation and editing
     init(existingExercise: Exercise? = nil) {
         self.existingExercise = existingExercise
         
@@ -63,14 +69,13 @@ struct CreateEditExerciseView: View {
             Form {
                 // MARK: - Name
                 Section("Details") {
-                    // APPLY STYLING HERE (TextField)
                     VStack {
                         TextField("Exercise Name", text: $name)
                             .padding(10)
-                            .background(Color.containerBackground) // Use the new color
-                            .cornerRadius(8) // Apply soft corners
+                            .background(Color.containerBackground)
+                            .cornerRadius(8)
                     }
-                    .listRowBackground(Color.clear) // Remove the default list background
+                    .listRowBackground(Color.clear)
                 }
 
                 // MARK: - Classification Pickers
@@ -123,13 +128,13 @@ struct CreateEditExerciseView: View {
                 
                 // MARK: - Notes
                 Section("Notes (Optional)") {
-                    // APPLY STYLING HERE (TextEditor)
+                    
                     TextEditor(text: $notes)
                         .frame(minHeight: 150) // Ensure enough height for notes
                         .padding(8)
-                        .background(Color.containerBackground) // Use the new color
-                        .cornerRadius(8) // Apply soft corners
-                        .listRowBackground(Color.clear) // Remove the default list background
+                        .background(Color.containerBackground) 
+                        .cornerRadius(8)
+                        .listRowBackground(Color.clear)
                 }
             }
             .navigationTitle(existingExercise == nil ? "New Exercise" : "Edit Exercise")
